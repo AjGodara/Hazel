@@ -68,7 +68,7 @@ namespace Hazel {
 		template<typename T>
 		bool Dispatch(EventFn<T> func)
 		{
-			if (m_Event.GetEventType() == T::GetStaticType)
+			if (m_Event.GetEventType() == T::GetStaticType())
 			{
 				m_Event.m_handled = func(*(T*)&m_Event); // much better to use func(*(dynamic_cast<T*> &m_Event))   ???
 				return true;
