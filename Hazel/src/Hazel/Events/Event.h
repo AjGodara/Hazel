@@ -46,14 +46,14 @@ namespace Hazel {
 		friend class EventDispatcher;
 
 	public:
+		bool Handled = false;
+
+
 		virtual EventType GetEventType()const = 0;
 		virtual const char* GetName()const = 0;				// should it be used only for DEBUG build ?
 		virtual int GetCategoryFlags()const = 0;
 		virtual std::string ToString()const { return GetName(); }
 		inline bool IsInCategory(EventCategory category)const { return GetCategoryFlags() & category; }
-
-	protected:
-		bool m_handled = false;
 
 	};
 
@@ -70,7 +70,7 @@ namespace Hazel {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_handled = func(*(T*)&m_Event); // much better to use func(*(dynamic_cast<T*> &m_Event))   ???
+				m_Event.Handled = func(*(T*)&m_Event); // much better to use func(*(dynamic_cast<T*> &m_Event))   ???
 				return true;
 			}
 			return false;
