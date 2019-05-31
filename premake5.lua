@@ -14,10 +14,13 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
+IncludeDir["ImGui"] = "Hazel/vendor/imgui"
+
 
 -- Includes the GLFW premake file
 include "Hazel/vendor/GLFW"
 include "Hazel/vendor/Glad"
+include "Hazel/vendor/ImGui"
 
 project "Hazel"
 	location "Hazel"
@@ -41,7 +44,8 @@ project "Hazel"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	-- Links the static library (GLFW, GLAD, Opengl32.lib) into the dynamic library(Hazel)
@@ -49,6 +53,7 @@ project "Hazel"
 	{
 		"GLFW",
 		"Glad",
+		"ImGui",
 		"Opengl32.lib"
 	}
 
