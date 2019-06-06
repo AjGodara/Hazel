@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "Log.h"
+#include "Hazel/Input.h"
 
 #include <glad/glad.h>
 
@@ -66,6 +67,10 @@ namespace Hazel {
 				layer->OnUpdate();
 
 			m_Window->OnUpdate();
+			auto[x, y] = Input::GetMousePosition();
+			
+			// to validate the working of input polling:
+			//HZ_INFO("Mouse position {}, {}", x, y);
 		}
 	}
 
