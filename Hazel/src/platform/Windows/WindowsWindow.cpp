@@ -59,7 +59,20 @@ namespace Hazel {
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		// set glfw callbacks
+		 //  set glfw callbacks
+		 //  How does this work ? 
+		 //--> we pass the function(lambda) to be set as the glfw callback function for events.
+		 //  glfw calls/executes this function when the corresponding event occurs, inside this function, 
+		 //  we call our own implementation of the callback(set as EventCallback on WindowData member variable of 
+		 //   this class) and do the required things from there.
+		 //  
+		 //  Currently: we set the callback function of windowData member from Application class, 
+		 //  which calls the function passed(Application::OnEvent) whenever an event occurs and passes the 
+		 //  relevant event as parameter, then from Application::OnEvent: we dispatch it to all the 
+		 //  layers and overlays via 'OnEvent' function declared in Layer.h, then it is the job of that 
+		 //  layer to consume that event and do something usefull regarding the event. For that, the 
+		 //  layer can use EventDispatcher to handle the events based on their types.
+
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
