@@ -1,8 +1,10 @@
 #include "hzpch.h"
 #include "Hazel.h"
+#include "platform/OpenGL/OpenGLShader.h"
 
 #include "imgui/imgui.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class ExampleLayer : public Hazel::Layer
 {
@@ -89,7 +91,7 @@ public:
 				color = v_Color;
 			}
 		)";
-		m_Shader.reset(new Hazel::Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset( Hazel::Shader::Create(vertexSrc, fragmentSrc));
 
 
 		std::string flatColorShaderVertexSrc = R"(
@@ -119,7 +121,7 @@ public:
 				color = u_Color;
 			}
 		)";
-		m_FlatColorShader.reset(new Hazel::Shader(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
+		m_FlatColorShader.reset(Hazel::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
 	}
 
 	void OnUpdate(Hazel::Timestep ts) override
@@ -152,7 +154,6 @@ public:
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
 		
 		glm::vec4 redColor(0.8f, 0.2f, 0.3f, 1.0f);
-		glm::vec4 blueColor(0.2f, 0.3f, 0.8f, 1.0f);
 
 		for (int y = 0; y < 20; y++)
 		{
@@ -160,10 +161,10 @@ public:
 			{
 				glm::vec3 pos(x* 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos)*scale;
-				if ((x+y) % 2)
-					m_FlatColorShader->UploadUniformFloat4("u_Color" ,redColor);
+				if ((x + y) % 2)
+					std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", redColor);
 				else
-					m_FlatColorShader->UploadUniformFloat4("u_Color", blueColor);
+					std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 
 				Hazel::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
@@ -176,8 +177,8 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
-		ImGui::Begin("Test");
-		ImGui::Text("Hello World");
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
 
@@ -197,6 +198,8 @@ public:
 
 		float m_CameraRotation = 0.0f;
 		float m_CameraRotationSpeed = 180.f;
+
+		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };
 
 class Sandbox : public Hazel::Application
